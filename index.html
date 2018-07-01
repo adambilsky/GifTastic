@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Giphy API Assignment</title>
+</head>
+
+<body>
+    <div id = "container">
+        <h3>Marvel Superhero Search</h3>
+        <div id = "button-space"></div>
+        <!-- --> 
+            <form id="superhero-form">
+                <br><br><label for="superhero-input">Add a Superhero</label>
+                <input type="text" id="superhero-input"><br>
+          
+                <!-- Button triggers new superhero to be added -->
+                <input id="add-superhero" type="submit" value="Add a Superhero">
+              </form>
+          
+        <div id = "image-space"></div>
+    </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    // Example queryURL for Giphy API
+    $(document).ready(function() {
+
+        // *** pre-populated array. Last pre-determined term is "Vision":::
+        var searchTerms = ["Ironman", "Captain America", "Thor", "Hulk", "Black Widow", "Hawkeye", "Spider Man", "Scarlet Witch", "Vision"];
+        
+        // *** dynamic search button creator:::
+        function renderButtons() {
+
+            // Deletes the movie buttons prior to adding new movie buttons
+            $("#button-space").empty();
+
+            // Loops through the array of searchTerms
+            for (var i = 0; i < searchTerms.length; i++) {
+
+                // Then dynamicaly generate buttons for each search term in the array.
+                var a = $("<button>");
+                // Add a class *****
+                a.addClass("superhero");
+                // Add a data-attribute with a value of the search term at index i
+                a.attr("data-name", searchTerms[i]);
+                // Provide the button's text with a value of the search term at index i
+                a.text(searchTerms[i]);
+                // Add the button to the HTML
+                $("#button-space").append(a);
+                
+            }
+            // Add click event listen listener to the "Add a Superhero" button/form
+            $("#add-superhero").on("click", function(event) {
+                
+                // Prevent the form from trying to submit itself.
+                event.preventDefault();
+                // Grab and store the data-superhero property value from the button
+                var term = $("#superhero-input").val().trim();
+                console.log(term);
+                // add the user-specified term to the array
+                searchTerms.push(term);
+                // re-render the buttons
+                renderButtons();
+                console.log(searchTerms);
+                $("#superhero-input").val("");
+            });
+
+        }
+        renderButtons(); 
+        console.log(searchTerms);
+
+        // *** Additional Button Creation
+
+        // *** Button-Based Search:::
+
+
+        // *** (currently static) queryURL:::
+        // This will become an object with the stem, API key, and search parameters 'q', 'rating', and 'limit'.
+        // 'limit' should be made into a drop-down menu.
+        // 'rating' CAN be made into a drop-down filter if we choose.
+            // NOTE: if we make it a drop-down, the user choice should include the ratings below it as well, i.e., 
+            // if the user chooses "PG-13", the data choice should somehow include G, PG, AND PG-13 ratings,
+            // IF this is not already built in.
+
+        var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=t97eJWx9EuEFie6hlf5u4l5zdIpOWhU3&q=" + searchTerms[0] + "&limit=5";
+        
+        // *** AJAX function (using ONLY the first index of the searchTerms array):::
+        // $.ajax({
+        //     url: queryURL,
+        //     method: "GET"
+        //     }).then(function(response) {
+        //         console.log(response);
+                
+        //         // *** image-parsing and display loop:::
+        //         for (i=0;i<response.data.length;i++) {
+        //             var imageURL = response.data[i].images.fixed_height.url;
+        //             var imageRating = response.data[i].rating;
+        //             var imageDiv = $("<div>");
+        //             var p = $("<p>").text("Rating: "+ imageRating);
+
+        //             var getImage = $("<img>");
+        //             getImage.attr("src", imageURL);
+        //             imageDiv.append(p);
+        //             imageDiv.append(getImage);
+        //             $("#image-space").prepend(imageDiv);
+        //         }
+        //     });
+    })
+  </script>
+</body>
+
+</html>
