@@ -18,6 +18,11 @@ body {
     font-size: 12px;
     font-kerning: yes;
 }
+.make-favorite {
+    position: relative;
+    right: 5px;
+    float:right;
+}
 #page-top {
     border: 3px solid red;
 }
@@ -25,8 +30,7 @@ body {
 #banner {
     text-align:center;
     color: white;
-    background-image: linear-gradient(-135deg, red, rgba(193, 213, 60, 0.454) , maroon);
-    font-family: 
+    background-image: linear-gradient(-135deg, red, rgba(193, 213, 60, 0.454), maroon);
 }
 
 

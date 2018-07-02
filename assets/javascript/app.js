@@ -89,13 +89,16 @@
                         imageDiv.append(p);
                         imageDiv.append(getImage);
                         imageDiv.attr("id",imageID);
-                        console.log(imageDiv);
+                        var b = $("<button>").addClass("make-favorite").attr("id", imageID);
+                        b.attr("src", response.data[i].images.fixed_height_still.url);
+                        b.text("Add to Favorites");
+                        imageDiv.append(b);
                         $("#image-space").prepend(imageDiv);
                     }
                 });
         });
         
-        // GIPHY IMAGE ANIMATION-TOGGLE:::
+        // *** GIF IMAGE ANIMATION-TOGGLE:::
         // Clicking the image toggles between the still and animated versions of the gif
         $("#image-space").on("click", "img", function(event) {
             event.preventDefault();
@@ -116,5 +119,11 @@
         });
 
         // *** PERSISTENCE ("favorites")
-        
+        var favorites = [];
+        $(".make-favorite").on("click", function(event) {
+            event.preventDefault();
+            console.log($(this).attr("src"));
+        });
+
+
     })
