@@ -78,7 +78,7 @@
                         var imageTitle = response.data[i].title;
                         var imageSrc = response.data[i].source_tld;
                         var imageDiv = $("<div>");
-                        var p = $("<p>").text("Rating: " + imageRating + "   Source: '" + imageSrc + "'");
+                        var p = $("<p>").text("Rating: " + imageRating);
                         var getImage = $("<img>");
                         var imageID = "imageResult" + i;
                         getImage.attr("src", imageURL);
@@ -89,7 +89,8 @@
                         imageDiv.append(p);
                         imageDiv.append(getImage);
                         imageDiv.attr("id",imageID);
-                        var b = $("<button>").addClass("make-favorite").attr("id", imageID);
+                        var b = $("<button>").addClass("make-favorite");
+                        b.attr("id", imageID);
                         b.attr("src", response.data[i].images.fixed_height_still.url);
                         b.text("Add to Favorites");
                         imageDiv.append(b);
@@ -120,10 +121,19 @@
 
         // *** PERSISTENCE ("favorites")
         var favorites = [];
-        $(".make-favorite").on("click", function(event) {
-            event.preventDefault();
+        $("#image-space").on("click", "button", function(event) {
+            // event.preventDefault();
             console.log($(this).attr("src"));
+            favorites.push($(this).attr("src"));
+            console.log(favorites);
         });
-
+        $("#show-favorites").on("click", function(event) {
+            $("#image-space").empty();
+                for (i=0; i<favorites.length; i++) {
+                    var showFave = $("<img>")
+                    showFave.attr("src",favorites[i]);
+                    $("#image-space").prepend(showFave[i]);
+                }
+        });
 
     })
