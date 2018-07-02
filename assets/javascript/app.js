@@ -60,7 +60,7 @@
             event.preventDefault();
             var searchTerm = $(this).attr("data-name");
             
-            // the page should grab 10 static, non-animated gif images
+            // Grab 10 static, non-animated gif images
             var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=t97eJWx9EuEFie6hlf5u4l5zdIpOWhU3&q=" + searchTerm + "&limit=10";
         
             // // *** AJAX function (using ONLY the first index of the searchTerms array):::
@@ -75,8 +75,10 @@
                         var imageURL = response.data[i].images.fixed_height_still.url;
                         // var imageAnimURL = response.data[i].images.fixed_height.url;
                         var imageRating = response.data[i].rating;
+                        var imageTitle = response.data[i].title;
+                        var imageSrc = response.data[i].source_tld;
                         var imageDiv = $("<div>");
-                        var p = $("<p>").text("Rating: "+ imageRating);
+                        var p = $("<p>").text("Rating: " + imageRating + "   Source: '" + imageSrc + "'");
                         var getImage = $("<img>");
                         var imageID = "imageResult" + i;
                         getImage.attr("src", imageURL);
