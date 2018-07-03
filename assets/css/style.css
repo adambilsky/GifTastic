@@ -18,13 +18,15 @@ body {
     font-size: 12px;
     font-kerning: yes;
 }
-.make-favorite {
+.make-favorite,
+.del-favorite {
     position: relative;
     right: 5px;
     float:right;
 }
 #page-top {
     border: 3px solid red;
+    position: relative;
 }
 
 #banner {
@@ -36,6 +38,7 @@ body {
 
 #superhero-form {
     margin-top: 5px;
+    width: 50%;
 }
 #add-superhero,
 label {
@@ -54,6 +57,14 @@ label {
     border: 2px solid red;
 }
 
+#show-favorites {
+    /* position: relative; */
+    float: right;
+}
+#clear-favorites {
+    /* position: relative; */
+    float: right;
+}
 #button-space {
     background-color: blue;
     padding-left: 5px;

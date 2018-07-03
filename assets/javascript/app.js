@@ -89,6 +89,8 @@
                         imageDiv.append(p);
                         imageDiv.append(getImage);
                         imageDiv.attr("id",imageID);
+                        
+                        // 
                         var b = $("<button>").addClass("make-favorite");
                         b.attr("id", imageID);
                         b.attr("src", response.data[i].images.fixed_height_still.url);
@@ -120,20 +122,50 @@
         });
 
         // *** PERSISTENCE ("favorites")
+        // Create a "favorites" array, click to store images in the array
         var favorites = [];
-        $("#image-space").on("click", "button", function(event) {
+        $("#image-space").on("click", ".make-favorite", function(event) {
             // event.preventDefault();
             console.log($(this).attr("src"));
             favorites.push($(this).attr("src"));
             console.log(favorites);
         });
-        $("#show-favorites").on("click", function(event) {
+        
+        // SHOW FAVORITES
+        function showFavorites() {
             $("#image-space").empty();
-                for (i=0; i<favorites.length; i++) {
-                    var showFave = $("<img>")
-                    showFave.attr("src",favorites[i]);
-                    $("#image-space").prepend(showFave[i]);
-                }
+            for (i=0; i<favorites.length; i++) {
+                var showFave = $("<img>").attr("src",favorites[i]);
+                var imageDiv = $("<div>").append(showFave);
+                var b = $("<button>").addClass("del-favorite");
+                var faveID = favorites[i]
+                b.attr("id", faveID);
+                b.attr("src", favorites[i]);
+                b.text("Remove");
+                imageDiv.append(b);
+
+                imageDiv.addClass("imageFrame");
+                $("#image-space").prepend(imageDiv);
+            }
+        }
+
+        // Click to show only the favorites
+            
+            $("#show-favorites").on("click", function(event) {
+                showFavorites();
+            });
+
+        // Remove individual items from "favorites"
+        $("#image-space").on("click", ".del-favorite", function(event) {
+            var splicer = favorites.indexOf($(this).attr("src"))
+            favorites.splice(splicer,1);
+            console.log(favorites);
+            showFavorites();
+        });
+        // Click to clear all favorites
+        $("#clear-favorites").on("click", function(event) {
+            $("#image-space").empty();
+            favorites=[];
         });
 
     })
