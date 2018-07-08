@@ -5,7 +5,9 @@
         // *** PRE-POPULATED BUTTON CREATION ARRAY. Last pre-determined term is "Vision":::
         // User-defined search terms are added to the array but are NOT used 
         var searchTerms = ["Ironman", "Captain America", "Thor", "Hulk", "Black Widow", "Hawkeye", "Spider Man", "Scarlet Witch", "Vision"];
-        
+        var lastSearchTerm = [];
+        var iMulti = 0;
+
         // *** DYNAMIC SEARCH BUTTON CREATION:::
         function renderButtons() {
 
@@ -37,11 +39,17 @@
                 // Grab and store the data-superhero property value from the button
                 var term = $("#superhero-input").val().trim();
                 // add the user-specified term to the array
-                if ($("#superhero-input").val()!="") {
+                // Add safeguard against 
+                if (term !="" && searchTerms.indexOf(term)===-1) {
                     searchTerms.push(term);
                     // re-render the buttons
                     $("#superhero-input").val("");
                     renderButtons();
+                }
+                else {
+                    alert("Please enter a new, non-blank search term!");
+                    $("#superhero-input").val("");
+
                 }
             });
 
@@ -56,31 +64,30 @@
             // i.e., PG = PG, G; PG-13 = PG-13, PG, G;
 
         $("#button-space").on("click", "button", function(event) {
-            console.log($(this).attr("data-name"));
             event.preventDefault();
             var searchTerm = $(this).attr("data-name");
+            var apiKey = "t97eJWx9EuEFie6hlf5u4l5zdIpOWhU3";
+            var searchLimit = 50;
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + searchTerm + "&api_key=" + apiKey +  "&limit=" + searchLimit;
             
-            // Grab 10 static, non-animated gif images
-            var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=t97eJWx9EuEFie6hlf5u4l5zdIpOWhU3&q=" + searchTerm + "&limit=10";
-        
-            // // *** AJAX function (using ONLY the first index of the searchTerms array):::
-            $.ajax({
+            if (lastSearchTerm.indexOf(searchTerm)===-1) {
+                // Grab static, non-animated gif images but display only the first 10
+                // // *** AJAX function (using ONLY the first index of the searchTerms array):::
+                $.ajax({
                 url: queryURL,
                 method: "GET"
                 }).then(function(response) {
                     console.log(response);
                     
                     // *** image-parsing and display loop:::
-                    for (i=0;i<response.data.length;i++) {
+                    for (i=0;i<10;i++) {
                         var imageURL = response.data[i].images.fixed_height_still.url;
-                        // var imageAnimURL = response.data[i].images.fixed_height.url;
                         var imageRating = response.data[i].rating;
-                        var imageTitle = response.data[i].title;
-                        var imageSrc = response.data[i].source_tld;
                         var imageDiv = $("<div>");
                         var p = $("<p>").text("Rating: " + imageRating);
                         var getImage = $("<img>");
                         var imageID = "imageResult" + i;
+                        
                         getImage.attr("src", imageURL);
                         getImage.attr("data-still", response.data[i].images.fixed_height_still.url);
                         getImage.attr("data-animate", response.data[i].images.fixed_height.url);
@@ -90,15 +97,55 @@
                         imageDiv.append(getImage);
                         imageDiv.attr("id",imageID);
                         
-                        // 
                         var b = $("<button>").addClass("make-favorite");
                         b.attr("id", imageID);
                         b.attr("src", response.data[i].images.fixed_height_still.url);
                         b.text("Add to Favorites");
                         imageDiv.append(b);
                         $("#image-space").prepend(imageDiv);
+                        
                     }
                 });
+                lastSearchTerm.splice(0,1,searchTerm)
+                console.log(iMulti);
+                console.log(lastSearchTerm);
+
+            }
+            else {
+                $.ajax({
+                url: queryURL,
+                method: "GET"
+                }).then(function(response) {
+                    console.log(response);
+                    for (i=0;i<10;i++) {
+                        var imageURL = response.data[i + iMulti].images.fixed_height_still.url;
+                        console.log(imageURL);
+                        var imageRating = response.data[i + iMulti].rating;
+                        var imageDiv = $("<div>");
+                        var p = $("<p>").text("Rating: " + imageRating);
+                        var getImage = $("<img>");
+                        var imageID = "imageResult" + (i + iMulti);
+                        getImage.attr("src", imageURL);
+                        getImage.attr("data-still", response.data[i + iMulti].images.fixed_height_still.url);
+                        getImage.attr("data-animate", response.data[i + iMulti].images.fixed_height.url);
+                        getImage.attr("data-state", "still");
+                        imageDiv.addClass("imageFrame");
+                        imageDiv.append(p);
+                        imageDiv.append(getImage);
+                        imageDiv.attr("id",imageID);
+                        
+                        var b = $("<button>").addClass("make-favorite");
+                        b.attr("id", imageID);
+                        b.attr("src", response.data[i + iMulti].images.fixed_height_still.url);
+                        b.text("Add to Favorites");
+                        imageDiv.append(b);
+                        $("#image-space").prepend(imageDiv);    
+                    }
+                });
+                iMulti+=10;
+                lastSearchTerm.splice(0,1,searchTerm);
+                console.log(iMulti, lastSearchTerm[0]);
+            };
         });
         
         // *** GIF IMAGE ANIMATION-TOGGLE:::
@@ -150,10 +197,9 @@
         }
 
         // Click to show only the favorites
-            
-            $("#show-favorites").on("click", function(event) {
-                showFavorites();
-            });
+        $("#show-favorites").on("click", function(event) {
+            showFavorites();
+        });
 
         // Remove individual items from "favorites"
         $("#image-space").on("click", ".del-favorite", function(event) {
@@ -162,6 +208,7 @@
             console.log(favorites);
             showFavorites();
         });
+
         // Click to clear all favorites
         $("#clear-favorites").on("click", function(event) {
             $("#image-space").empty();
