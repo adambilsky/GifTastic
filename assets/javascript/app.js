@@ -71,26 +71,26 @@
             var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + searchTerm + "&api_key=" + apiKey +  "&limit=" + searchLimit;
             
             if (lastSearchTerm.indexOf(searchTerm)===-1) {
+                iMulti = 0;
                 // Grab static, non-animated gif images but display only the first 10
                 // // *** AJAX function (using ONLY the first index of the searchTerms array):::
                 $.ajax({
                 url: queryURL,
                 method: "GET"
                 }).then(function(response) {
-                    console.log(response);
                     
                     // *** image-parsing and display loop:::
                     for (i=0;i<10;i++) {
-                        var imageURL = response.data[i].images.fixed_height_still.url;
-                        var imageRating = response.data[i].rating;
+                        var imageURL = response.data[i + iMulti].images.fixed_height_still.url;
+                        var imageRating = response.data[i + iMulti].rating;
                         var imageDiv = $("<div>");
                         var p = $("<p>").text("Rating: " + imageRating);
                         var getImage = $("<img>");
-                        var imageID = "imageResult" + i;
+                        var imageID = "imageResult" + (i + iMulti);
                         
                         getImage.attr("src", imageURL);
-                        getImage.attr("data-still", response.data[i].images.fixed_height_still.url);
-                        getImage.attr("data-animate", response.data[i].images.fixed_height.url);
+                        getImage.attr("data-still", response.data[i + iMulti].images.fixed_height_still.url);
+                        getImage.attr("data-animate", response.data[i + iMulti].images.fixed_height.url);
                         getImage.attr("data-state", "still");
                         imageDiv.addClass("imageFrame");
                         imageDiv.append(p);
@@ -99,19 +99,27 @@
                         
                         var b = $("<button>").addClass("make-favorite");
                         b.attr("id", imageID);
-                        b.attr("src", response.data[i].images.fixed_height_still.url);
+                        b.attr("src", response.data[i + iMulti].images.fixed_height_still.url);
                         b.text("Add to Favorites");
                         imageDiv.append(b);
                         $("#image-space").prepend(imageDiv);
-                        
                     }
+                    iMulti = 0;
+                    lastSearchTerm.splice(0,1,searchTerm)
+                    console.log(lastSearchTerm, iMulti);
+    
                 });
-                lastSearchTerm.splice(0,1,searchTerm)
-                console.log(iMulti);
-                console.log(lastSearchTerm);
 
             }
             else {
+                if (iMulti > 39) {
+                    alert("You can display a maximum of 50 results per hero.");
+                    iMulti = 0;
+                }
+                else {
+                    iMulti+=10;
+                    lastSearchTerm.splice(0,1,searchTerm);
+                }
                 $.ajax({
                 url: queryURL,
                 method: "GET"
@@ -141,10 +149,8 @@
                         imageDiv.append(b);
                         $("#image-space").prepend(imageDiv);    
                     }
+                        console.log(lastSearchTerm[0], iMulti);
                 });
-                iMulti+=10;
-                lastSearchTerm.splice(0,1,searchTerm);
-                console.log(iMulti, lastSearchTerm[0]);
             };
         });
         
